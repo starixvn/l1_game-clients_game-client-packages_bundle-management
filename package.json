@@ -35,6 +35,7 @@
   "devDependencies": {
     "@commitlint/cli": "^15.0.0",
     "@commitlint/config-conventional": "^15.0.0",
+    "@types/jest": "^27.0.3",
     "husky": "^7.0.4",
     "jest": "^27.4.3",
     "jest-junit": "^13.0.0",

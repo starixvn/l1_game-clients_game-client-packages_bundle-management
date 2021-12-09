@@ -1,5 +1,6 @@
 const path = require("path");
 const fs = require("fs");
+const packageUtils = require("./utils/package");
 const buildFinishedEvent = "build-finished";
 
 function onBuildFinished(options, callback) {
@@ -14,6 +15,7 @@ function onBuildFinished(options, callback) {
 module.exports = {
   load() {
     Editor.Builder.on(buildFinishedEvent, onBuildFinished);
+    packageUtils.mount();
   },
 
   unload() {
