@@ -1,0 +1,20 @@
+stages:
+  - test
+  - post-test
+
+variables:
+  PROJECT_NAME: l3-bundle-management
+
+include:
+  - project: "ci/common-ci"
+    ref: rocketor
+    file: "unit-test/js-unit-test.gitlab-ci.yml"
+  - project: "ci/common-ci"
+    ref: rocketor
+    file: "sonarqube/sonarqube.js-unittest.gitlab-ci.yml"  
+
+unit-test-js:
+  artifacts:
+    reports:
+      junit: coverage/*.xml
+      cobertura: coverage/cobertura-coverage.xml
