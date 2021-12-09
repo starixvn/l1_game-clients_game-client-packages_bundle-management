@@ -6,7 +6,7 @@ const packageUtils = require("../../src/utils/package");
 
 describe("package", () => {
   describe("mount", () => {
-    it("the file is not existed", () => {
+    it("should create a resource file when it is not existed", () => {
       global.Editor = { projectPath: "." };
       const expectedPath = path.join("assets/resources/bundle-information.js");
 
@@ -16,12 +16,16 @@ describe("package", () => {
         return false;
       });
 
+      fs.copyFileSync.mockImplementation((templatePath, filePath) => {
+        expect(expectedPath).toBe(filePath);
+      });
+
       packageUtils.mount();
 
       expect(fs.existsSync).toBeCalled();
     });
 
-    it("the file is existed", () => {
+    it("should skip process when the file is existed", () => {
       global.Editor = { Project: { path: "." } };
       const expectedPath = path.join("assets/resources/bundle-information.js");
 
@@ -29,10 +33,6 @@ describe("package", () => {
         expect(expectedPath).toBe(filePath);
 
         return true;
-      });
-
-      fs.copyFileSync.mockImplementation((templatePath, filePath) => {
-        expect(expectedPath).toBe(filePath);
       });
 
       packageUtils.mount();

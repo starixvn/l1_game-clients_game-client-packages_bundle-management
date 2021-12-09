@@ -7,7 +7,7 @@ const fs = require("fs");
 
 describe("main", () => {
   describe("load", () => {
-    it("register build-finished event", () => {
+    it("when register build-finished event, the register method should be called", () => {
       const registerFunction = jest.fn((event, callback) => {
         expect(event).toBe("build-finished");
         expect(callback).toBeDefined();
@@ -30,34 +30,40 @@ describe("main", () => {
         },
       ],
       [],
-    ])("trigger build-finished event", (versions) => {
-      const executeEvent = jest.fn((event, callback) => {
-        expect(event).toBe("build-finished");
-        expect(callback).toBeDefined();
+    ])(
+      "when trigger build-finished event, the registered method should be called",
+      (versions) => {
+        const executeEvent = jest.fn((event, callback) => {
+          expect(event).toBe("build-finished");
+          expect(callback).toBeDefined();
 
-        callback({ dest: "", settings: { bundleVers: versions } }, () => ({}));
-      });
+          callback(
+            { dest: "", settings: { bundleVers: versions } },
+            () => ({})
+          );
+        });
 
-      fs.writeFileSync.mockImplementation((destination, data) => {
-        const expectedDestination = path.join("assets/versions.json");
+        fs.writeFileSync.mockImplementation((destination, data) => {
+          const expectedDestination = path.join("assets/versions.json");
 
-        expect(destination).toBe(expectedDestination);
-        expect(data).toBe(JSON.stringify(versions || {}));
-      });
+          expect(destination).toBe(expectedDestination);
+          expect(data).toBe(JSON.stringify(versions || {}));
+        });
 
-      global.Editor = {
-        Builder: { on: executeEvent },
-      };
+        global.Editor = {
+          Builder: { on: executeEvent },
+        };
 
-      main.load();
+        main.load();
 
-      expect(executeEvent).toBeCalled();
-      expect(fs.writeFileSync).toBeCalled();
-    });
+        expect(executeEvent).toBeCalled();
+        expect(fs.writeFileSync).toBeCalled();
+      }
+    );
   });
 
   describe("unload", () => {
-    it("register build-finished event", () => {
+    it("when unregister build-finished event, the unregister method should be called", () => {
       const unregisterFunction = jest.fn((event, callback) => {
         expect(event).toBe("build-finished");
         expect(callback).toBeDefined();
