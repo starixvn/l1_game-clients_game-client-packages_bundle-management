@@ -7,4 +7,7 @@ module.exports = {
   coverageReporters: ["clover", "lcov", "text-summary", "cobertura"],
   coverageDirectory: "coverage",
   collectCoverageFrom: ["src/**/*.(t|j)s"],
+  moduleNameMapper: {
+    "^bundle-manager$": "<rootDir>/src/runtime-scripts/bundle-manager.js",
+  },
 };
