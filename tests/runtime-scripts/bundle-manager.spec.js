@@ -70,6 +70,28 @@ describe("bundle-manager", () => {
       expect(cc.assetManager.loadBundle).toBeCalled();
     });
 
+    it("when sending api request with status 404 should load bundle with the old version", () => {
+      window.bundleInfos = {
+        id: {
+          name: "name",
+          url: "url",
+        },
+      };
+
+      xhrMockObject.send.mockImplementationOnce(() => {
+        xhrMockObject.readyState = 4;
+        xhrMockObject.status = 404;
+
+        xhrMockObject.onloadend();
+      });
+
+      bundleManager.init();
+
+      expect(xhrMockObject.open).toBeCalled();
+      expect(xhrMockObject.send).toBeCalled();
+      expect(cc.assetManager.loadBundle).toBeCalled();
+    });
+
     it("when sending api request error should load bundle with the old version", () => {
       window.bundleInfos = {
         id: {

@@ -8,6 +8,7 @@ module.exports = {
   coverageDirectory: "coverage",
   collectCoverageFrom: ["src/**/*.(t|j)s"],
   moduleNameMapper: {
-    "^bundle-manager$": "<rootDir>/src/runtime-scripts/bundle-manager.js",
+    "^bundle-manager$": "<rootDir>/src/runtime-scripts/bundle-manager",
+    "^fire-fs$": "<rootDir>/tests/utils/fire-fs.mock.js",
   },
 };

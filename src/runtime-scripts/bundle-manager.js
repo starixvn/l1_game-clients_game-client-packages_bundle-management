@@ -15,8 +15,13 @@ function get(url, callback) {
     callback();
   };
 
-  xhr.open("GET", url, true);
+  xhr.onloadend = function () {
+    xhr.status === 404 && callback();
+  };
+
   xhr.timeout = 10000;
+
+  xhr.open("GET", url, true);
 
   xhr.send();
 }
