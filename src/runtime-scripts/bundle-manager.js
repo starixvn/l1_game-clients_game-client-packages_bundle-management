@@ -6,8 +6,6 @@ function get(url, callback) {
       const response = xhr.responseText;
 
       callback(response);
-    } else {
-      callback();
     }
   };
 
@@ -72,15 +70,30 @@ function compareAndUpdateNewVersion(url, bundleName, callback) {
 /**
  * @param {string} url
  * @param {string} bundleName
+ * @param {string} version
  * @param {(error: Error, bundle: Bundle) => void} callback
  * @template Bundle
  */
-function loadBundle(url, bundleName, callback) {
-  compareAndUpdateNewVersion(url, bundleName, (version) => {
-    const bundleUrl = `${url}/${bundleName}`;
+function loadBundleWithVersion(url, bundleName, version, callback) {
+  const bundleUrl = `${url}/${bundleName}`;
 
-    cc.assetManager.loadBundle(bundleUrl, { version }, callback);
-  });
+  cc.assetManager.loadBundle(bundleUrl, { version }, callback);
+}
+
+/**
+ * @param {string} url
+ * @param {string} bundleName
+ * @param {(error: Error, bundle: Bundle) => void} callback
+ * @template Bundle
+ */
+function loadBundle(url, bundleName, callback, useMd5Cache = true) {
+  if (useMd5Cache) {
+    compareAndUpdateNewVersion(url, bundleName, (version) => {
+      loadBundleWithVersion(url, bundleName, version, callback);
+    });
+  } else {
+    loadBundleWithVersion(url, bundleName, null, callback);
+  }
 }
 
 /**
@@ -91,19 +104,26 @@ function loadBundle(url, bundleName, callback) {
  * @param {(asset: AssetType) => void} callback
  * @template AssetType
  */
-function loadRemoteAsset(url, bundleName, assetPath, assetType, callback) {
+function loadRemoteAsset(
+  url,
+  bundleName,
+  assetPath,
+  assetType,
+  callback,
+  useMd5Cache = true
+) {
   const onLoadedBundle = (error, bundle) => {
     error
       ? callback(error)
       : bundle && bundle.load(assetPath, assetType, callback);
   };
 
-  loadBundle(url, bundleName, onLoadedBundle);
+  loadBundle(url, bundleName, onLoadedBundle, useMd5Cache);
 }
 
 /**
  * @param {string} id
- * @returns {{url: string, name: string}}
+ * @returns {{url: string, name: string, useMd5Cache: boolean}}
  */
 function getBundleInfo(id) {
   const bundleInfos = window.bundleInfos;
@@ -112,7 +132,7 @@ function getBundleInfo(id) {
 }
 
 /**
- * @returns {{url: string, name: string}[]}
+ * @returns {{url: string, name: string, useMd5Cache: boolean}[]}
  */
 function getAllBundleInfos() {
   const bundleInfos = window.bundleInfos || {};
@@ -123,7 +143,9 @@ function getAllBundleInfos() {
 function init() {
   const bundleInfos = getAllBundleInfos();
 
-  bundleInfos.forEach((info) => loadBundle(info.url, info.name));
+  bundleInfos.forEach((info) =>
+    loadBundle(info.url, info.name, null, info.useMd5Cache)
+  );
 }
 
 module.exports = {

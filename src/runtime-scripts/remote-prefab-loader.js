@@ -36,14 +36,15 @@ cc.Class({
         name,
         this.prefabPath,
         cc.Prefab,
-        onPrefabLoaded
+        onPrefabLoaded,
+        bundleInfo.useMd5Cache
       );
     }
   },
 
   _onInitialize(node) {
-    this.initializationEventHandlers.forEach((event) => event.emit([node]));
-
     this.node.addChild(node);
+
+    this.initializationEventHandlers.forEach((event) => event.emit([node]));
   },
 });

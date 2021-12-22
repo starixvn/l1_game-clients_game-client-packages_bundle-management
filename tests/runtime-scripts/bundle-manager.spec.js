@@ -167,6 +167,10 @@ describe("bundle-manager", () => {
 
         xhrMockObject.onreadystatechange();
       });
+
+      xhrMockObject.open.mockClear();
+      xhrMockObject.send.mockClear();
+      cc.assetManager.loadBundle.mockClear();
     });
 
     it("when loading the bundle failure should call the callback with error parameter", () => {
@@ -220,6 +224,28 @@ describe("bundle-manager", () => {
       expect(xhrMockObject.send).toBeCalled();
       expect(cc.assetManager.loadBundle).toBeCalled();
       expect(bundle.load).toBeCalled();
+    });
+
+    it("when using md5 cache should load bundle without version", () => {
+      cc.assetManager.loadBundle.mockImplementationOnce(
+        (url, options, callback) => {
+          expect(options.version).toBeFalsy();
+          callback(null, null);
+        }
+      );
+
+      bundleManager.loadRemoteAsset(
+        "url",
+        "name",
+        ".",
+        "Prefab",
+        (error) => {
+          expect(error).toBeDefined();
+        },
+        false
+      );
+
+      expect(cc.assetManager.loadBundle).toBeCalled();
     });
   });
 });

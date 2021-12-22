@@ -31,7 +31,8 @@ cc.Class({
         name,
         this.spriteFramePath,
         cc.SpriteFrame,
-        onSpriteFrameLoaded
+        onSpriteFrameLoaded,
+        bundleInfo.useMd5Cache
       );
     }
   },
