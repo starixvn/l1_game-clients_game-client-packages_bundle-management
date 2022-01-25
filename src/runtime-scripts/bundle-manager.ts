@@ -19,13 +19,9 @@ interface IAssetManager {
   loadBundle(nameOrUrl: string, options: Record<string, any>, onComplete: (err: Error, bundle: IBundle) => void): void;
 }
 
-interface IHttpAdapter extends IAdapter<{ get: <TResult>(url: string) => Promise<TResult> }> {}
-
-interface IAssetManagerAdapter extends IAdapter<IAssetManager> {}
-
 interface IBundleManagerAdapters {
-  http?: IHttpAdapter;
-  assetManager?: IAssetManagerAdapter;
+  http?: IAdapter<{ get: <TResult>(url: string) => Promise<TResult> }>;
+  assetManager?: IAdapter<IAssetManager>;
 }
 
 interface ILoadAssetOptions {
