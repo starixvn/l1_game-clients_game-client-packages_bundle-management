@@ -56,3 +56,9 @@ coverage/
 reports/
 !.vscode/settings.json
 .scannerwork/
+
+#//////////////////////////
+# Build files
+#//////////////////////////
+
+build/

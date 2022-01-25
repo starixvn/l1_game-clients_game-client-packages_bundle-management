@@ -1,6 +1,8 @@
 module.exports = {
   rootDir: "./",
   verbose: true,
+  preset: "ts-jest",
+  testEnvironment: "jsdom",
   modulePathIgnorePatterns: ["example"],
   testResultsProcessor: "jest-sonar-reporter",
   reporters: ["default", ["jest-junit", { outputDirectory: "coverage" }]],

@@ -1,4 +1,4 @@
-const bundleManager = require("bundle-manager");
+const { BundleManager } = require("bundle-manager");
 
 cc.Class({
   extends: cc.Component,
@@ -14,37 +14,37 @@ cc.Class({
       default: [],
       type: cc.Component.EventHandler,
     },
+    onProgressHandlers: {
+      default: [],
+      type: cc.Component.EventHandler,
+    },
   },
 
   onLoad() {
-    const bundleInfo = bundleManager.getBundleInfo(this.bundleId);
+    return BundleManager.getInstance()
+      .loadAsset({
+        bundleId: this.bundleId,
+        path: this.prefabPath,
+        type: cc.Prefab,
+        onProgress: (finished, total) => this._onProgress(finished, total),
+      })
+      .then((prefab) => {
+        const node = cc.instantiate(prefab);
 
-    if (bundleInfo) {
-      const { url, name } = bundleInfo;
-      const onPrefabLoaded = (error, prefab) => {
-        if (error) {
-          cc.error(error);
-        } else {
-          const node = cc.instantiate(prefab);
-
-          this._onInitialize(node);
-        }
-      };
-
-      bundleManager.loadRemoteAsset(
-        url,
-        name,
-        this.prefabPath,
-        cc.Prefab,
-        onPrefabLoaded,
-        bundleInfo.useMd5Cache
-      );
-    }
+        this._onInitialize(node);
+      })
+      .catch((error) => {
+        cc.error(error);
+      });
   },
 
   _onInitialize(node) {
     this.node.addChild(node);
 
     this.initializationEventHandlers.forEach((event) => event.emit([node]));
+  },
+
+  _onProgress(finished, total) {
+    this.onProgressHandlers.forEach((event) => event.emit([finished, total]));
   },
 });

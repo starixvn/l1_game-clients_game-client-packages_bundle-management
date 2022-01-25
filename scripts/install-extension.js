@@ -1,0 +1,32 @@
+const fs = require("fs");
+const path = require("path");
+const packageJson = require("../package.json");
+const { copyFolderSync } = require("./fs-extra");
+
+const sourceDirectory = path.join(__dirname, "../lib");
+const isDebugMode = process.argv.includes("--debug");
+
+const needToInstallExtension = isDebugMode || __dirname.endsWith(path.join("node_modules", packageJson.name));
+
+const destinationDirectory = isDebugMode
+  ? path.join(__dirname, "../example/packages", packageJson.name)
+  : path.join(__dirname, "../../../packages", packageJson.name);
+
+function createPackageJson() {
+  const excludeFields = ["scripts", "husky", "commitlint", "jestSonar", "devDependencies"];
+
+  return Object.assign({}, packageJson, ...excludeFields.map((field) => ({ [field]: undefined })));
+}
+
+if (needToInstallExtension) {
+  console.log(destinationDirectory);
+  if (fs.existsSync(destinationDirectory)) {
+    fs.rmdirSync(destinationDirectory, { recursive: true });
+  }
+
+  fs.mkdirSync(destinationDirectory, { recursive: true });
+
+  fs.writeFileSync(path.join(destinationDirectory, "package.json"), JSON.stringify(createPackageJson(), null, 2));
+
+  copyFolderSync(sourceDirectory, destinationDirectory);
+}
