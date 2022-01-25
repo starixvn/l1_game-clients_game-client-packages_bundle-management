@@ -6,7 +6,7 @@ module.exports = {
   modulePathIgnorePatterns: ["example"],
   testResultsProcessor: "jest-sonar-reporter",
   reporters: ["default", ["jest-junit", { outputDirectory: "coverage" }]],
-  coverageReporters: ["clover", "lcov", "text-summary", "cobertura"],
+  coverageReporters: ["clover", "lcov", "text-summary", "cobertura", "text"],
   coverageDirectory: "coverage",
   collectCoverageFrom: ["src/**/*.(t|j)s"],
   moduleNameMapper: {

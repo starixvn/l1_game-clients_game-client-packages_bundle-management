@@ -19,6 +19,19 @@ const options = {
 const bundleManager = BundleManager.getInstance(options);
 
 describe("bundle-manager", () => {
+  describe("constructor", () => {
+    it("when not pass the listener should create an instance without listeners", () => {
+      // Arrange
+      BundleManager["instance"] = null;
+
+      // Act
+      const instance = BundleManager.getInstance({ listeners: null, adapters: {} });
+
+      // Assert
+      expect(instance["listeners"]).toHaveLength(0);
+    });
+  });
+
   describe("getBundleInfo", () => {
     it("when the global variable is not defined should throw an error", () => {
       // Arrange
