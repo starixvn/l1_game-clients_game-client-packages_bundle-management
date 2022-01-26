@@ -1,9 +1,10 @@
 {
   "name": "bundle-management",
-  "version": "1.0.0-beta.10",
+  "version": "1.0.0-beta.13",
   "description": "Bundle management",
   "author": "Nex3 Team",
   "main": "main.js",
+  "types": "types/runtime-scripts/bundle-management.d.ts",
   "runtime-resource": {
     "path": "runtime-scripts",
     "name": "plugin"
@@ -17,20 +18,21 @@
     "docs/",
     "lib/",
     "scripts/",
-    "src/"
+    "src/",
+    "types/"
   ],
   "scripts": {
     "postinstall": "node scripts/install-extension.js",
     "test": "jest",
     "test-coverage": "jest --coverage",
-    "build": "rimraf ./lib && tsc && copyfiles -u 1 src/**/*.meta lib",
+    "build": "rimraf ./lib && rimraf ./types && tsc && copyfiles -u 1 src/**/*.meta lib",
     "example:install": "node scripts/install-extension.js --debug",
     "reg": "npm set registry http://npm.lumigame.com",
     "semantic-release": "semantic-release",
     "version:patch": "npm version patch --git-tag-version false",
     "version:minor": "npm version minor --git-tag-version false",
     "version:beta": "npm version prerelease --git-tag-version false --preid beta",
-    "publish:beta": "npm publish --registry http://npm.lumigame.com --tag beta"
+    "publish:beta": "yarn version:beta && npm publish --registry http://npm.lumigame.com --tag beta"
   },
   "husky": {
     "hooks": {

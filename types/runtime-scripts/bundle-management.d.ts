@@ -1,0 +1,55 @@
+interface IAdapter<T> {
+    (): T;
+}
+interface IListener {
+    onVersionChanged(): void;
+}
+interface IBundle {
+    load<T>(path: string, type: unknown, onProgress: (finish: number, total: number) => void, onComplete: (error: Error, asset: T) => void): void;
+}
+interface IAssetManager {
+    loadBundle(nameOrUrl: string, options: Record<string, any>, onComplete: (err: Error, bundle: IBundle) => void): void;
+}
+interface IBundleManagerAdapters {
+    http?: IAdapter<{
+        get: <TResult>(url: string) => Promise<TResult>;
+    }>;
+    assetManager?: IAdapter<IAssetManager>;
+}
+interface ILoadAssetOptions {
+    bundleId: string;
+    path: string;
+    type: unknown;
+    onProgress?: (finish: number, total: number) => void;
+}
+declare global {
+    export interface Window {
+        bundleInfos: Record<string, {
+            name: string;
+            url: string;
+            useMd5Cache: boolean;
+        }>;
+    }
+}
+interface IBundleManagerOptions {
+    adapters: IBundleManagerAdapters;
+    listeners: IListener[];
+}
+export declare class BundleManager {
+    private readonly listeners;
+    private readonly adapters;
+    private readonly versions;
+    private static instance;
+    constructor(options: IBundleManagerOptions);
+    static initialize(options: IBundleManagerOptions): void;
+    static getInstance(options?: IBundleManagerOptions): BundleManager;
+    getBundleInfo(id: string): {
+        name: string;
+        url: string;
+        useMd5Cache: boolean;
+    };
+    loadBundle(bundleId: string): Promise<IBundle>;
+    loadAsset<T>(options: ILoadAssetOptions): Promise<T>;
+    protected compareAndUpdateNewVersion(bundleId: string): Promise<void>;
+}
+export {};

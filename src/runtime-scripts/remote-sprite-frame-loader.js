@@ -1,4 +1,4 @@
-const { BundleManager } = require("bundle-manager");
+const { BundleManager } = require("bundle-management");
 
 cc.Class({
   extends: cc.Component,

@@ -54,9 +54,15 @@ export class BundleManager {
     this.versions = {};
   }
 
-  public static getInstance(options?: IBundleManagerOptions) {
+  public static initialize(options: IBundleManagerOptions) {
     if (!BundleManager.instance) {
       BundleManager.instance = new BundleManager(options);
+    }
+  }
+
+  public static getInstance(options?: IBundleManagerOptions) {
+    if (!BundleManager.instance) {
+      BundleManager.initialize(options);
     }
 
     return BundleManager.instance;

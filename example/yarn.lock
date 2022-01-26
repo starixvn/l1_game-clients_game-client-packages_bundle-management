@@ -9,10 +9,10 @@ axios@^0.25.0:
   dependencies:
     follow-redirects "^1.14.7"
 
-bundle-management@^1.0.0-beta-9:
-  version "1.0.0-beta-9"
-  resolved "https://npm.lumigame.com/bundle-management/-/bundle-management-1.0.0-beta-9.tgz#870dd5f62e006b2b481813807e2e79b5e38fd0d7"
-  integrity sha512-eyz9YoCmEGPQA6YFN5Eubk0EuAzMvwKhj6nNK2YyFxaJTmhhkBHsVmyvde5pOXQs4AeB9He3v5KGAE5h93cHkQ==
+bundle-management@1.0.0-beta.13:
+  version "1.0.0-beta.13"
+  resolved "https://npm.lumigame.com/bundle-management/-/bundle-management-1.0.0-beta.13.tgz#6d82dd847fceb0f9301648115824099c8d3902ad"
+  integrity sha512-nez1Pod1Gaw6BH+mfgXD1PQFKFKCCrHFW/24nv6/5z5bop504ak5Ji7ZENDNaxuxIKSfyu1xEVXQqdv6qu0SWA==
 
 follow-redirects@^1.14.7:
   version "1.14.7"

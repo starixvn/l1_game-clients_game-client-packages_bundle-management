@@ -14,7 +14,7 @@ const bundleManager = {
   loadAsset: jest.fn(),
 };
 
-jest.mock("bundle-manager", () => ({
+jest.mock("bundle-management", () => ({
   BundleManager: {
     getInstance: () => bundleManager,
   },

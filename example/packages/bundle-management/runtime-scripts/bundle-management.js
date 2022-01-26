@@ -43,9 +43,14 @@ var BundleManager = /** @class */ (function () {
         this.adapters = options.adapters;
         this.versions = {};
     }
-    BundleManager.getInstance = function (options) {
+    BundleManager.initialize = function (options) {
         if (!BundleManager.instance) {
             BundleManager.instance = new BundleManager(options);
+        }
+    };
+    BundleManager.getInstance = function (options) {
+        if (!BundleManager.instance) {
+            BundleManager.initialize(options);
         }
         return BundleManager.instance;
     };

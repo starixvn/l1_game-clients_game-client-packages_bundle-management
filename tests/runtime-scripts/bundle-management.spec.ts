@@ -1,4 +1,4 @@
-import { BundleManager } from "../../src/runtime-scripts/bundle-manager";
+import { BundleManager } from "../../src/runtime-scripts/bundle-management";
 
 const listenerMock = {
   onVersionChanged: jest.fn(),
@@ -18,7 +18,7 @@ const options = {
 };
 const bundleManager = BundleManager.getInstance(options);
 
-describe("bundle-manager", () => {
+describe("bundle-management", () => {
   describe("constructor", () => {
     it("when not pass the listener should create an instance without listeners", () => {
       // Arrange

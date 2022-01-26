@@ -1,8 +1,8 @@
 import axios from "axios";
-const { BundleManager } = require("bundle-manager");
+const { BundleManager } = require("bundle-management");
 const { ccclass } = cc._decorator;
 
-BundleManager.getInstance({
+BundleManager.initialize({
   adapters: {
     http: () => ({ get: (url: string) => axios.get(url).then((res) => res.data) }),
     assetManager: () => cc.assetManager,
