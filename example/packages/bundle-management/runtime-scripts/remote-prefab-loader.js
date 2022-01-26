@@ -18,7 +18,7 @@ cc.Class({
     },
     onLoad: function () {
         var _this = this;
-        BundleManager.getInstance()
+        return BundleManager.getInstance()
             .loadAsset({
             bundleId: this.bundleId,
             path: this.prefabPath,

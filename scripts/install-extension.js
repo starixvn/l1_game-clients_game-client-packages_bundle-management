@@ -13,7 +13,7 @@ const destinationDirectory = isDebugMode
   : path.join(__dirname, "../../../packages", packageJson.name);
 
 function createPackageJson() {
-  const excludeFields = ["scripts", "husky", "commitlint", "jestSonar", "devDependencies"];
+  const excludeFields = ["scripts", "husky", "commitlint", "jestSonar", "devDependencies", "release"];
 
   return Object.assign({}, packageJson, ...excludeFields.map((field) => ({ [field]: undefined })));
 }

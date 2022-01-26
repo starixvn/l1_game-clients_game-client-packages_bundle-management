@@ -39,9 +39,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.BundleManager = void 0;
 var BundleManager = /** @class */ (function () {
     function BundleManager(options) {
-        if (!options.adapters) {
-            throw Error("Adapters is a required option");
-        }
         this.listeners = options.listeners || [];
         this.adapters = options.adapters;
         this.versions = {};
@@ -58,10 +55,6 @@ var BundleManager = /** @class */ (function () {
             throw new Error("Not found bundle '".concat(id, "'."));
         }
         return bundleInfos && bundleInfos[id];
-    };
-    BundleManager.prototype.getAllBundleInfos = function () {
-        var bundleInfos = window.bundleInfos || {};
-        return Object.values(bundleInfos);
     };
     BundleManager.prototype.loadBundle = function (bundleId) {
         return __awaiter(this, void 0, void 0, function () {
