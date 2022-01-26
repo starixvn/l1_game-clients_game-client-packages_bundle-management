@@ -1,6 +1,6 @@
 {
   "name": "bundle-management",
-  "version": "1.0.0-beta-9",
+  "version": "1.0.0-beta.10",
   "description": "Bundle management",
   "author": "Nex3 Team",
   "main": "main.js",
@@ -27,9 +27,9 @@
     "example:install": "node scripts/install-extension.js --debug",
     "reg": "npm set registry http://npm.lumigame.com",
     "semantic-release": "semantic-release",
-    "version:patch": "npm version patch",
-    "version:minor": "npm version minor",
-    "version:beta": "npm version prerelease --preid beta",
+    "version:patch": "npm version patch --git-tag-version false",
+    "version:minor": "npm version minor --git-tag-version false",
+    "version:beta": "npm version prerelease --git-tag-version false --preid beta",
     "publish:beta": "npm publish --registry http://npm.lumigame.com --tag beta"
   },
   "husky": {
