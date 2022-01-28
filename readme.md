@@ -1,8 +1,44 @@
 # Bundle Management for Cocos Creator
 
-## Manual installation
+## Installation
 
-Clone this project to your computer. Copy folder `dist/bundle-management` to cocos's project `<project path>/packages`
+- Using npm
+
+```bash
+npm install bundle-management --dev
+```
+
+- Using yarn
+
+```bash
+yarn add bundle-management --dev
+```
+
+## Initialization
+
+At the application starting point, add the following code
+
+- Using `Typescript` or `ES Module`
+
+```typescript
+input { BundleManager } from "bundle-management";
+
+BundleManager.initialize({
+  adapters: <passing the adapters>,
+  listeners: [<some listeners>],
+});
+```
+
+- Using `CommonJS`
+
+```javascript
+const { BundleManager } = require("bundle-management");
+
+BundleManager.initialize({
+  adapters: <passing the adapters>,
+  listeners: [<some listeners>],
+});
+```
 
 ## Bundle Information Configuration
 
@@ -52,6 +88,8 @@ Load and instantiate prefab from the remote bundle.
 
 - `Initialization Event Handler`: The callback methods will be called after the prefab is created.
 
+- `On Progress Handlers`: The callback methods will be called when the resource loads
+
 ### 2. Remote Sprite Frame Loader
 
 Load sprite frame from the remote bundle and assign to Sprite Component.
@@ -62,3 +100,4 @@ Load sprite frame from the remote bundle and assign to Sprite Component.
 
 - `Bundle Id`: The bundle id.
 - `Sprite Frame Path`: The relative path to this sprite frame in a bundle.
+- `On Progress Handlers`: The callback methods will be called when the resource loads
