@@ -2,7 +2,7 @@ interface IAdapter<T> {
     (): T;
 }
 interface IListener {
-    onVersionChanged(): void;
+    onVersionChanged(oldVersion: string, newVersion: string): void;
 }
 interface IBundle {
     load<T>(path: string, type: unknown, onProgress: (finish: number, total: number) => void, onComplete: (error: Error, asset: T) => void): void;

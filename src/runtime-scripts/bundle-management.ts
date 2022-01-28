@@ -3,7 +3,7 @@ interface IAdapter<T> {
 }
 
 interface IListener {
-  onVersionChanged(): void;
+  onVersionChanged(oldVersion: string, newVersion: string): void;
 }
 
 interface IBundle {
@@ -123,7 +123,7 @@ export class BundleManager {
 
     if (difference) {
       this.versions[name] = currentVersion;
-      this.listeners.forEach((listener) => listener.onVersionChanged());
+      this.listeners.forEach((listener) => listener.onVersionChanged(oldVersion, currentVersion));
     }
   }
 }
