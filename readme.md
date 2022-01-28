@@ -1,5 +1,15 @@
 # Bundle Management for Cocos Creator
 
+`Bundle Management` is a library for remote package management - solving resource downloading and versioning.
+
+The logic of downloading resources is as follows:
+
+1. Determine the bundle by id which is defined in [Bundle Information Configuration](#bundle-information-configuration).
+
+2. Fetch the version information and compare the change, if so, emit an event to the listener.
+
+3. Download the latest version of the bundle from remote.
+
 ## Installation
 
 - Using npm
