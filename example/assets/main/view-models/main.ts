@@ -1,5 +1,6 @@
 import axios from "axios";
-const { BundleManager } = require("bundle-management");
+import { BundleManager } from "bundle-management";
+
 const { ccclass } = cc._decorator;
 
 BundleManager.initialize({
