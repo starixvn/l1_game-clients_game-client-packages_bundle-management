@@ -238,7 +238,7 @@
   },
   {
     "__type__": "cc.Node",
-    "_name": "prefab-container",
+    "_name": "prefab",
     "_objFlags": 0,
     "_parent": {
       "__id__": 2
@@ -600,7 +600,7 @@
   },
   {
     "__type__": "cc.Node",
-    "_name": "sprite-frame-container",
+    "_name": "sprite-frame",
     "_objFlags": 0,
     "_parent": {
       "__id__": 2
