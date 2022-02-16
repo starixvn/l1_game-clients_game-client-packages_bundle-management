@@ -57,6 +57,7 @@ After installing the extension, it will create the file `<cocos project>/assets/
 ```javascript
 window.bundleInfos = {
   [bundle id]: {
+    useMd5Cache: boolean,
     url: "the bundle url",
     name: "the bundle name",
   },
@@ -68,6 +69,7 @@ Example:
 ```javascript
 window.bundleInfos = {
   package: {
+    useMd5Cache: true,
     url: "http://example.com/bundle",
     name: "package",
   },
