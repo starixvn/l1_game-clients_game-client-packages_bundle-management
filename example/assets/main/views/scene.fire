@@ -501,7 +501,7 @@
     "component": "",
     "_componentId": "2a36eKBhEFNDIj7NXRlVV8K",
     "handler": "onProgress",
-    "customEventData": ""
+    "customEventData": "Prefab"
   },
   {
     "__type__": "cc.Node",
@@ -785,7 +785,7 @@
     "component": "",
     "_componentId": "2a36eKBhEFNDIj7NXRlVV8K",
     "handler": "onProgress",
-    "customEventData": ""
+    "customEventData": "Image"
   },
   {
     "__type__": "cc.Node",

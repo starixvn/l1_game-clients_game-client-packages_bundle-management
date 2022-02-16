@@ -17,7 +17,7 @@ export default class Main extends cc.Component {
     console.log(node.name, data);
   }
 
-  onProgress(finished: number, total: number) {
-    console.log(`Loading ${((finished / total) * 100).toFixed(2)}% (Total: ${total}, Finished: ${finished}) `);
+  onProgress(finished: number, total: number, name: string) {
+    console.log(`Loading '${name}' ${((finished / total) * 100).toFixed(2)}% (Total: ${total}, Finished: ${finished}) `);
   }
 }
