@@ -1,8 +1,23 @@
+import axios from "axios";
+import { BundleManager } from "bundle-management";
+
 const { ccclass } = cc._decorator;
+
+BundleManager.initialize({
+  adapters: {
+    http: () => ({ get: (url: string) => axios.get(url).then((res) => res.data) }),
+    assetManager: () => cc.assetManager,
+  },
+  listeners: [{ onVersionChanged: () => console.log("Version changed") }],
+});
 
 @ccclass
 export default class Main extends cc.Component {
   onInitializedTheBall(node: cc.Node, data: string) {
     console.log(node.name, data);
+  }
+
+  onProgress(finished: number, total: number, name: string) {
+    console.log(`Loading '${name}' ${((finished / total) * 100).toFixed(2)}% (Total: ${total}, Finished: ${finished}) `);
   }
 }

@@ -1,5 +1,4 @@
-const { ccclass, property, requireComponent, executeInEditMode } =
-  cc._decorator;
+const { ccclass, property, requireComponent, executeInEditMode } = cc._decorator;
 
 @ccclass
 @requireComponent(cc.Sprite)

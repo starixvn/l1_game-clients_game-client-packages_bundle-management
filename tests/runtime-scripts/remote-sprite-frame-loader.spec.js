@@ -9,10 +9,16 @@ global.cc = {
   SpriteFrame: "SpriteFrame",
 };
 
-jest.mock("bundle-manager");
+const bundleManager = {
+  loadAsset: jest.fn(),
+};
 
+jest.mock("bundle-management", () => ({
+  BundleManager: {
+    getInstance: () => bundleManager,
+  },
+}));
 require("../../src/runtime-scripts/remote-sprite-frame-loader");
-const bundleManager = require("bundle-manager");
 
 describe("remote-sprite-frame-loader", () => {
   it("the component should be loaded", () => {
@@ -21,6 +27,7 @@ describe("remote-sprite-frame-loader", () => {
 
   describe("_updateNewSpriteFrame", () => {
     it("should assign new sprite frame to sprite component", () => {
+      // Arrange
       const sprite = { spriteFrame: "" };
       const context = {
         node: {
@@ -28,25 +35,31 @@ describe("remote-sprite-frame-loader", () => {
         },
       };
 
+      // Act
       component._updateNewSpriteFrame.call(context, "sprite-frame");
 
+      // Assert
       expect(context.node.getComponent).toBeCalled();
       expect(sprite.spriteFrame).toBe("sprite-frame");
     });
 
     it("should do nothing when sprite is undefined", () => {
+      // Arrange
       const context = {
         node: {
           getComponent: jest.fn().mockReturnValue(undefined),
         },
       };
 
+      // Act
       component._updateNewSpriteFrame.call(context, "sprite-frame");
 
+      // Assert
       expect(context.node.getComponent).toBeCalled();
     });
 
     it("should do nothing when argument is undefined", () => {
+      // Arrange
       const sprite = { spriteFrame: "default-frame" };
       const context = {
         node: {
@@ -54,74 +67,70 @@ describe("remote-sprite-frame-loader", () => {
         },
       };
 
+      // Act
       component._updateNewSpriteFrame.call(context);
 
+      // Assert
       expect(context.node.getComponent).toBeCalled();
       expect(sprite.spriteFrame).toBe("default-frame");
     });
   });
 
-  describe("onLoad", () => {
-    it("should do nothing when can't find the bundle info", () => {
-      component.onLoad();
+  describe("_onProgress", () => {
+    it("should trigger all event handlers when called", () => {
+      // Arrange
+      const context = {
+        onProgressHandlers: [{ emit: jest.fn() }],
+      };
 
-      expect(bundleManager.getBundleInfo).toBeCalled();
+      // Act
+      component._onProgress.call(context);
+
+      // Assert
+      context.onProgressHandlers.forEach((handler) => expect(handler.emit).toBeCalled());
+    });
+  });
+
+  describe("onLoad", () => {
+    beforeEach(() => {
+      bundleManager.loadAsset.mockReset();
     });
 
-    it("should call cc.error method when load remote asset failure", () => {
+    it("should call cc.error method when load remote asset failure", async () => {
+      // Arrange
       const context = {
         _updateNewSpriteFrame: jest.fn(),
         spriteFramePath: "path",
       };
 
-      bundleManager.getBundleInfo.mockReturnValueOnce({
-        url: "url",
-        name: "name",
-      });
+      bundleManager.loadAsset.mockRejectedValueOnce({});
 
-      bundleManager.loadRemoteAsset.mockImplementation(
-        (url, name, path, assetType, callback) => {
-          expect(url).toBe("url");
-          expect(name).toBe("name");
-          expect(path).toBe("path");
-          expect(assetType).toBe(cc.SpriteFrame);
+      // Act
+      await component.onLoad.call(context);
 
-          callback(true);
-        }
-      );
-
-      component.onLoad.call(context);
-
-      expect(bundleManager.getBundleInfo).toBeCalled();
+      // Assert
       expect(cc.error).toBeCalled();
       expect(context._updateNewSpriteFrame).toBeCalledTimes(0);
     });
 
-    it("should load remote asset when called", () => {
+    it("should load remote asset when called", async () => {
+      // Arrange
       const context = {
         _updateNewSpriteFrame: jest.fn(),
         spriteFramePath: "path",
+        _onProgress: jest.fn(),
       };
 
-      bundleManager.getBundleInfo.mockReturnValueOnce({
-        url: "url",
-        name: "name",
+      bundleManager.loadAsset.mockImplementationOnce((options) => {
+        options.onProgress(0, 0);
+
+        return Promise.resolve({});
       });
 
-      bundleManager.loadRemoteAsset.mockImplementation(
-        (url, name, path, assetType, callback) => {
-          expect(url).toBe("url");
-          expect(name).toBe("name");
-          expect(path).toBe("path");
-          expect(assetType).toBe(cc.SpriteFrame);
+      // Act
+      await component.onLoad.call(context);
 
-          callback(null, true);
-        }
-      );
-
-      component.onLoad.call(context);
-
-      expect(bundleManager.getBundleInfo).toBeCalled();
+      // Assert
       expect(context._updateNewSpriteFrame).toBeCalled();
     });
   });

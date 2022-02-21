@@ -1,4 +1,4 @@
-const bundleManager = require("bundle-manager");
+const { BundleManager } = require("bundle-management");
 
 cc.Class({
   extends: cc.Component,
@@ -11,29 +11,24 @@ cc.Class({
   properties: {
     bundleId: "",
     spriteFramePath: "",
+    onProgressHandlers: {
+      default: [],
+      type: cc.Component.EventHandler,
+    },
   },
 
   onLoad() {
-    const bundleInfo = bundleManager.getBundleInfo(this.bundleId);
-
-    if (bundleInfo) {
-      const { url, name } = bundleInfo;
-      const onSpriteFrameLoaded = (error, spriteFrame) => {
-        if (error) {
-          cc.error(error);
-        } else {
-          this._updateNewSpriteFrame(spriteFrame);
-        }
-      };
-
-      bundleManager.loadRemoteAsset(
-        url,
-        name,
-        this.spriteFramePath,
-        cc.SpriteFrame,
-        onSpriteFrameLoaded
-      );
-    }
+    return BundleManager.getInstance()
+      .loadAsset({
+        bundleId: this.bundleId,
+        path: this.spriteFramePath,
+        type: cc.SpriteFrame,
+        onProgress: (finished, total) => this._onProgress(finished, total),
+      })
+      .then((spriteFrame) => this._updateNewSpriteFrame(spriteFrame))
+      .catch((error) => {
+        cc.error(error);
+      });
   },
 
   _updateNewSpriteFrame(spriteFrame) {
@@ -42,5 +37,9 @@ cc.Class({
     if (sprite && spriteFrame) {
       sprite.spriteFrame = spriteFrame;
     }
+  },
+
+  _onProgress(finished, total) {
+    this.onProgressHandlers.forEach((event) => event.emit([finished, total]));
   },
 });

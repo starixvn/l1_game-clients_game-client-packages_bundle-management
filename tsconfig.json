@@ -1,0 +1,12 @@
+{
+  "compilerOptions": {
+    "outDir": "lib/",
+    "target": "ES5",
+    "module": "CommonJS",
+    "declaration": true,
+    "declarationDir": "types",
+    "allowJs": true,
+    "skipLibCheck": true
+  },
+  "include": ["src/**/*"]
+}

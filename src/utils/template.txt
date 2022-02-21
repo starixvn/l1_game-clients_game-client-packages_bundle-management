@@ -4,5 +4,6 @@ window.bundleInfos = {
     default: {
         url: "",
         name: "",
+        useMd5Cache: true
     }
 };

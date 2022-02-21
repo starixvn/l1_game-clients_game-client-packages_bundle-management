@@ -1,8 +1,54 @@
 # Bundle Management for Cocos Creator
 
-## Manual installation
+`Bundle Management` is a library for remote package management - solving resource downloading and versioning.
 
-Clone this project to your computer. Copy folder `dist/bundle-management` to cocos's project `<project path>/packages`
+The logic of downloading resources is as follows:
+
+1. Determine the bundle by id which is defined in [Bundle Information Configuration](#bundle-information-configuration).
+
+2. Fetch the version information and compare the change, if so, emit an event to the listener.
+
+3. Download the latest version of the bundle from remote.
+
+## Installation
+
+- Using npm
+
+```bash
+npm install bundle-management --dev
+```
+
+- Using yarn
+
+```bash
+yarn add bundle-management --dev
+```
+
+## Initialization
+
+At the application starting point, add the following code
+
+- Using `Typescript` or `ES Module`
+
+```typescript
+input { BundleManager } from "bundle-management";
+
+BundleManager.initialize({
+  adapters: <passing the adapters>,
+  listeners: [<some listeners>],
+});
+```
+
+- Using `CommonJS`
+
+```javascript
+const { BundleManager } = require("bundle-management");
+
+BundleManager.initialize({
+  adapters: <passing the adapters>,
+  listeners: [<some listeners>],
+});
+```
 
 ## Bundle Information Configuration
 
@@ -11,6 +57,7 @@ After installing the extension, it will create the file `<cocos project>/assets/
 ```javascript
 window.bundleInfos = {
   [bundle id]: {
+    useMd5Cache: boolean,
     url: "the bundle url",
     name: "the bundle name",
   },
@@ -22,6 +69,7 @@ Example:
 ```javascript
 window.bundleInfos = {
   package: {
+    useMd5Cache: true,
     url: "http://example.com/bundle",
     name: "package",
   },
@@ -52,6 +100,8 @@ Load and instantiate prefab from the remote bundle.
 
 - `Initialization Event Handler`: The callback methods will be called after the prefab is created.
 
+- `On Progress Handlers`: The callback methods will be called when the resource loads
+
 ### 2. Remote Sprite Frame Loader
 
 Load sprite frame from the remote bundle and assign to Sprite Component.
@@ -62,3 +112,4 @@ Load sprite frame from the remote bundle and assign to Sprite Component.
 
 - `Bundle Id`: The bundle id.
 - `Sprite Frame Path`: The relative path to this sprite frame in a bundle.
+- `On Progress Handlers`: The callback methods will be called when the resource loads

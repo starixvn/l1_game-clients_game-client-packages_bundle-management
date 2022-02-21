@@ -10,18 +10,27 @@ global.cc = {
   Prefab: "prefab",
 };
 
-jest.mock("bundle-manager");
+const bundleManager = {
+  loadAsset: jest.fn(),
+};
+
+jest.mock("bundle-management", () => ({
+  BundleManager: {
+    getInstance: () => bundleManager,
+  },
+}));
 
 require("../../src/runtime-scripts/remote-prefab-loader");
-const bundleManager = require("bundle-manager");
 
 describe("remote-prefab-loader", () => {
   it("the component should be loaded", () => {
+    // Assert
     expect(component).toBeDefined();
   });
 
   describe("_onInitialize", () => {
     it("should add a new node as a child when the event handler array is empty", () => {
+      // Arrange
       const context = {
         node: {
           addChild: jest.fn(),
@@ -29,12 +38,15 @@ describe("remote-prefab-loader", () => {
         initializationEventHandlers: [],
       };
 
+      // Act
       component._onInitialize.call(context);
 
+      // Assert
       expect(context.node.addChild).toBeCalled();
     });
 
     it("should trigger all event handlers when the event handler array has data", () => {
+      // Arrange
       const context = {
         node: {
           addChild: jest.fn(),
@@ -42,77 +54,69 @@ describe("remote-prefab-loader", () => {
         initializationEventHandlers: [{ emit: jest.fn() }],
       };
 
+      // Act
       component._onInitialize.call(context);
 
+      // Assert
       expect(context.node.addChild).toBeCalled();
+      context.initializationEventHandlers.forEach((handler) => expect(handler.emit).toBeCalled());
+    });
+  });
 
-      context.initializationEventHandlers.forEach((handler) =>
-        expect(handler.emit).toBeCalled()
-      );
+  describe("_onProgress", () => {
+    it("should trigger all event handlers when called", () => {
+      // Arrange
+      const context = {
+        onProgressHandlers: [{ emit: jest.fn() }],
+      };
+
+      // Act
+      component._onProgress.call(context);
+
+      // Assert
+      context.onProgressHandlers.forEach((handler) => expect(handler.emit).toBeCalled());
     });
   });
 
   describe("onLoad", () => {
-    it("should do nothing when can't find the bundle info", () => {
-      component.onLoad();
-
-      expect(bundleManager.getBundleInfo).toBeCalled();
+    beforeEach(() => {
+      bundleManager.loadAsset.mockClear();
     });
 
-    it("should call cc.error method when load remote asset failure", () => {
+    it("without call initialize method when load remote asset failure", async () => {
+      // Arrange
       const context = {
         _onInitialize: jest.fn(),
         prefabPath: "path",
       };
 
-      bundleManager.getBundleInfo.mockReturnValueOnce({
-        url: "url",
-        name: "name",
-      });
+      bundleManager.loadAsset.mockRejectedValueOnce({});
 
-      bundleManager.loadRemoteAsset.mockImplementation(
-        (url, name, path, assetType, callback) => {
-          expect(url).toBe("url");
-          expect(name).toBe("name");
-          expect(path).toBe("path");
-          expect(assetType).toBe(cc.Prefab);
+      // Act
+      await component.onLoad.call(context);
 
-          callback(true);
-        }
-      );
-
-      component.onLoad.call(context);
-
-      expect(bundleManager.getBundleInfo).toBeCalled();
-      expect(cc.error).toBeCalled();
+      // Assert
+      expect(context._onInitialize).toBeCalledTimes(0);
     });
 
-    it("should load remote asset when called", () => {
+    it("should load remote asset when called", async () => {
+      // Arrange
       const context = {
         _onInitialize: jest.fn(),
+        _onProgress: jest.fn(),
         prefabPath: "path",
       };
 
-      bundleManager.getBundleInfo.mockReturnValueOnce({
-        url: "url",
-        name: "name",
+      bundleManager.loadAsset.mockImplementationOnce((options) => {
+        options.onProgress(0, 0);
+
+        return Promise.resolve({});
       });
 
-      bundleManager.loadRemoteAsset.mockImplementation(
-        (url, name, path, assetType, callback) => {
-          expect(url).toBe("url");
-          expect(name).toBe("name");
-          expect(path).toBe("path");
-          expect(assetType).toBe(cc.Prefab);
+      // Act
+      await component.onLoad.call(context);
 
-          callback(null, true);
-        }
-      );
-
-      component.onLoad.call(context);
-
-      expect(bundleManager.getBundleInfo).toBeCalled();
-      expect(cc.instantiate).toBeCalled();
+      // Assert
       expect(context._onInitialize).toBeCalled();
     });
   });

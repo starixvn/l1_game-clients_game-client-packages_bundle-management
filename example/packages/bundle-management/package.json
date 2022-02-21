@@ -1,16 +1,17 @@
 {
   "name": "bundle-management",
-  "version": "1.0.0",
+  "version": "1.0.0-beta.14",
   "description": "Bundle management",
   "author": "Nex3 Team",
-  "main": "src/main.js",
+  "main": "main.js",
+  "types": "types/runtime-scripts/bundle-management.d.ts",
   "runtime-resource": {
-    "path": "src/runtime-scripts",
+    "path": "runtime-scripts",
     "name": "plugin"
   },
   "reload": {
     "ignore": [
-      "src/runtime-scripts/**/*"
+      "runtime-scripts/**/*"
     ]
   }
 }
