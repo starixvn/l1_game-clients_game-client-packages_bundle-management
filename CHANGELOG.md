@@ -1,3 +1,10 @@
+## [1.0.1](https://git3.nexdev.net/indo-market/game-clients/bundle-management/compare/v1.0.0...v1.0.1) (2022-03-02)
+
+
+### Bug Fixes
+
+* **deps:** update dependency axios to ^0.26.0 ([b89b807](https://git3.nexdev.net/indo-market/game-clients/bundle-management/commit/b89b807523f9850a39d1d91a205f295c90c9083d))
+
 # 1.0.0 (2022-03-02)
 
 
