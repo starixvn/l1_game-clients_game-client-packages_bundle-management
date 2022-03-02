@@ -1,6 +1,7 @@
 stages:
   - test
   - post-test
+  - deploy
   - publish
 
 variables:
@@ -16,6 +17,8 @@ include:
   - project: "ci/common-ci"
     ref: master
     file: "npm/publish-npm.gitlab-ci.yml"
+  - project: "indo-market/ci"
+    file: "using-renovate.yml"
 
 unit-test-js:
   artifacts:
