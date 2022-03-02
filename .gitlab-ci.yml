@@ -18,6 +18,7 @@ include:
     ref: master
     file: "npm/publish-npm.gitlab-ci.yml"
   - project: "indo-market/ci"
+    ref: main
     file: "using-renovate.yml"
 
 unit-test-js:
