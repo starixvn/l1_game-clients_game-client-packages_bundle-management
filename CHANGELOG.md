@@ -1,3 +1,10 @@
+# [1.1.0](https://git3.nexdev.net/l1/game-clients/bundle-management/compare/v1.0.0...v1.1.0) (2022-04-25)
+
+
+### Features
+
+* remove renovate job ([f75b29b](https://git3.nexdev.net/l1/game-clients/bundle-management/commit/f75b29bda8933cbcfe5596a249bebde80d655150))
+
 # 1.0.0 (2022-04-25)
 
 
