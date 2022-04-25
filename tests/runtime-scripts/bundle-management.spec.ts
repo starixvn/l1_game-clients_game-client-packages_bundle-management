@@ -92,6 +92,12 @@ describe("bundle-management", () => {
           url: "url",
           useMd5Cache: false,
         },
+        "other-id1": {
+          name: "name",
+          url: "url",
+          useMd5Cache: false,
+          dependencies: ["other-id"],
+        },
       };
 
       assetManagerMock.loadBundle.mockReset();
@@ -134,6 +140,21 @@ describe("bundle-management", () => {
 
       // Assert
       expect(bundle).toBeDefined();
+    });
+
+    describe("when the bundle has dependencies", () => {
+      it("should load all dependencies", async () => {
+        // Arrange
+        assetManagerMock.loadBundle.mockImplementation((url, options, callback) => {
+          callback(null, {});
+        });
+
+        // Act
+        await bundleManager.loadBundle("other-id1");
+
+        // Assert
+        expect(assetManagerMock.loadBundle).toBeCalledTimes(2);
+      });
     });
   });
 

@@ -28,6 +28,7 @@ declare global {
             name: string;
             url: string;
             useMd5Cache: boolean;
+            dependencies?: string[];
         }>;
     }
 }
@@ -47,6 +48,7 @@ export declare class BundleManager {
         name: string;
         url: string;
         useMd5Cache: boolean;
+        dependencies?: string[];
     };
     loadBundle(bundleId: string): Promise<IBundle>;
     loadAsset<T>(options: ILoadAssetOptions): Promise<T>;

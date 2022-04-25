@@ -63,20 +63,26 @@ var BundleManager = /** @class */ (function () {
     };
     BundleManager.prototype.loadBundle = function (bundleId) {
         return __awaiter(this, void 0, void 0, function () {
-            var assertManager, _a, name, url, useMd5Cache, bundleUrl;
+            var assertManager, _a, name, url, useMd5Cache, dependencies, bundleUrl;
             var _this = this;
             return __generator(this, function (_b) {
                 switch (_b.label) {
                     case 0:
                         assertManager = this.adapters.assetManager();
-                        _a = this.getBundleInfo(bundleId), name = _a.name, url = _a.url, useMd5Cache = _a.useMd5Cache;
+                        _a = this.getBundleInfo(bundleId), name = _a.name, url = _a.url, useMd5Cache = _a.useMd5Cache, dependencies = _a.dependencies;
                         bundleUrl = "".concat(url, "/").concat(name);
                         if (!useMd5Cache) return [3 /*break*/, 2];
                         return [4 /*yield*/, this.compareAndUpdateNewVersion(bundleId)];
                     case 1:
                         _b.sent();
                         _b.label = 2;
-                    case 2: return [2 /*return*/, new Promise(function (resolve, reject) {
+                    case 2:
+                        if (!(dependencies && dependencies.length)) return [3 /*break*/, 4];
+                        return [4 /*yield*/, Promise.all(dependencies.map(function (id) { return _this.loadBundle(id); }))];
+                    case 3:
+                        _b.sent();
+                        _b.label = 4;
+                    case 4: return [2 /*return*/, new Promise(function (resolve, reject) {
                             var version = _this.versions[name];
                             assertManager.loadBundle(bundleUrl, { version: version }, function (error, bundle) {
                                 error ? reject(error) : resolve(bundle);
