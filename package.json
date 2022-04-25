@@ -1,6 +1,6 @@
 {
   "name": "bundle-management",
-  "version": "1.0.1",
+  "version": "1.0.2-beta.0",
   "description": "Bundle management",
   "author": "Nex3 Team",
   "main": "main.js",
@@ -25,7 +25,7 @@
     "postinstall": "node scripts/install-extension.js",
     "test": "jest",
     "test-coverage": "jest --coverage",
-    "build": "rimraf ./lib && rimraf ./types && tsc && copyfiles -u 1 src/**/*.meta lib",
+    "build": "rimraf ./lib && rimraf ./types && tsc && copyfiles -u 1 src/**/*.meta lib  && copyfiles -u 1 src/**/*.txt lib",
     "example:install": "node scripts/install-extension.js --debug",
     "reg": "npm set registry http://npm.lumigame.com",
     "semantic-release": "semantic-release",

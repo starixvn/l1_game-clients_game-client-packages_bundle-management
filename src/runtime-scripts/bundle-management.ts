@@ -33,7 +33,7 @@ interface ILoadAssetOptions {
 
 declare global {
   export interface Window {
-    bundleInfos: Record<string, { name: string; url: string; useMd5Cache: boolean }>;
+    bundleInfos: Record<string, { name: string; url: string; useMd5Cache: boolean; dependencies?: string[] }>;
   }
 }
 
@@ -80,11 +80,15 @@ export class BundleManager {
 
   public async loadBundle(bundleId: string): Promise<IBundle> {
     const assertManager = this.adapters.assetManager();
-    const { name, url, useMd5Cache } = this.getBundleInfo(bundleId);
+    const { name, url, useMd5Cache, dependencies } = this.getBundleInfo(bundleId);
     const bundleUrl = `${url}/${name}`;
 
     if (useMd5Cache) {
       await this.compareAndUpdateNewVersion(bundleId);
+    }
+
+    if (dependencies && dependencies.length) {
+      await Promise.all(dependencies.map((id: string) => this.loadBundle(id)));
     }
 
     return new Promise<IBundle>((resolve, reject) => {
