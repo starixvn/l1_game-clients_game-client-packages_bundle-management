@@ -1,6 +1,6 @@
 {
   "name": "bundle-management",
-  "version": "1.0.2-beta.0",
+  "version": "1.1.1-beta.2",
   "description": "Bundle management",
   "author": "Nex3 Team",
   "main": "main.js",
@@ -13,5 +13,8 @@
     "ignore": [
       "runtime-scripts/**/*"
     ]
+  },
+  "dependencies": {
+    "fire-fs": "0.2.4"
   }
 }

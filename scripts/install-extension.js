@@ -14,8 +14,11 @@ const destinationDirectory = isDebugMode
 
 function createPackageJson() {
   const excludeFields = ["scripts", "husky", "commitlint", "jestSonar", "devDependencies", "release", "files"];
+  const newPackageJson = Object.assign({}, packageJson, ...excludeFields.map((field) => ({ [field]: undefined })));
 
-  return Object.assign({}, packageJson, ...excludeFields.map((field) => ({ [field]: undefined })));
+  newPackageJson.main = "main.js";
+
+  return newPackageJson;
 }
 
 if (needToInstallExtension) {
