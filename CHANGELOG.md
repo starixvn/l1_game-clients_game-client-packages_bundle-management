@@ -1,3 +1,10 @@
+## [1.1.1](https://git3.nexdev.net/l1/game-clients/bundle-management/compare/v1.1.0...v1.1.1) (2022-06-30)
+
+
+### Bug Fixes
+
+* generate new package json file for cocos extension ([94c36ea](https://git3.nexdev.net/l1/game-clients/bundle-management/commit/94c36ea04cc1283c0ff286b953edd3c191bbe0db))
+
 # [1.1.0](https://git3.nexdev.net/l1/game-clients/bundle-management/compare/v1.0.0...v1.1.0) (2022-04-25)
 
 
