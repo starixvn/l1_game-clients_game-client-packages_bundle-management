@@ -26,4 +26,4 @@ unit-test-js:
       cobertura: coverage/cobertura-coverage.xml
 
 publish_npm:
-  image: hub.lumigame.com/docker-hub/library/node:18.1-alpine
+  image: hub.lumigame.com/docker-hub/library/node:18.1-slim
