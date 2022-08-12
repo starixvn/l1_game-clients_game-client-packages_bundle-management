@@ -28,18 +28,25 @@ interface ILoadAssetOptions {
   bundleId: string;
   path: string;
   type: unknown;
+  pathForDevMode?: string;
   onProgress?: (finish: number, total: number) => void;
 }
 
 declare global {
+  const CC_EDITOR: boolean;
+  const Editor: any;
+  const cc: any;
+
   export interface Window {
-    bundleInfos: Record<string, { name: string; url: string; useMd5Cache: boolean; dependencies?: string[] }>;
+    bundleManagement: {
+      bundles?: Record<string, { name: string; url: string; useMd5Cache: boolean; dependencies?: string[] }>;
+    };
   }
 }
 
 interface IBundleManagerOptions {
   adapters: IBundleManagerAdapters;
-  listeners: IListener[];
+  listeners?: IListener[];
 }
 
 export class BundleManager {
@@ -69,7 +76,7 @@ export class BundleManager {
   }
 
   public getBundleInfo(id: string) {
-    const bundleInfos = window.bundleInfos;
+    const bundleInfos = window.bundleManagement.bundles;
 
     if (!bundleInfos || !bundleInfos[id]) {
       throw new Error(`Not found bundle '${id}'.`);
@@ -79,7 +86,17 @@ export class BundleManager {
   }
 
   public async loadBundle(bundleId: string): Promise<IBundle> {
-    const assertManager = this.adapters.assetManager();
+    if (CC_EDITOR) {
+      // In development mode, all assets will be put in the resources bundle.
+      return new Promise<IBundle>((resolve, reject) => {
+        const defaultBundle = "resources";
+        cc.assetManager.loadBundle(defaultBundle, null, (error, resource) => {
+          error ? reject(error) : resolve(resource);
+        });
+      });
+    }
+
+    const assetManager = this.adapters.assetManager();
     const { name, url, useMd5Cache, dependencies } = this.getBundleInfo(bundleId);
     const bundleUrl = `${url}/${name}`;
 
@@ -94,7 +111,7 @@ export class BundleManager {
     return new Promise<IBundle>((resolve, reject) => {
       const version = this.versions[name];
 
-      assertManager.loadBundle(bundleUrl, { version }, (error, bundle) => {
+      assetManager.loadBundle(bundleUrl, { version }, (error, bundle) => {
         error ? reject(error) : resolve(bundle);
       });
     });
@@ -107,9 +124,10 @@ export class BundleManager {
 
     const { bundleId, path, type, onProgress } = options;
     const bundle = await this.loadBundle(bundleId);
+    const assetPath = CC_EDITOR ? options.pathForDevMode : path;
 
     return new Promise<T>((resolve, reject) => {
-      bundle.load<T>(path, type, onProgress, (error, asset) => {
+      bundle.load<T>(assetPath, type, onProgress, (error, asset) => {
         error ? reject(error) : resolve(asset);
       });
     });

@@ -17,8 +17,13 @@ cc.Class({
     },
   },
 
-  onLoad() {
-    return BundleManager.getInstance()
+  async onLoad() {
+    if (CC_EDITOR) {
+      // Without running in development mode
+      return;
+    }
+
+    await BundleManager.getInstance()
       .loadAsset({
         bundleId: this.bundleId,
         path: this.spriteFramePath,

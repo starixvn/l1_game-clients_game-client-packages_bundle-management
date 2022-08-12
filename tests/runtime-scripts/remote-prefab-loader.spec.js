@@ -23,6 +23,10 @@ jest.mock("bundle-management", () => ({
 require("../../src/runtime-scripts/remote-prefab-loader");
 
 describe("remote-prefab-loader", () => {
+  beforeEach(() => {
+    Object.defineProperty(global, "CC_EDITOR", { value: false, writable: true });
+  });
+
   it("the component should be loaded", () => {
     // Assert
     expect(component).toBeDefined();
@@ -60,6 +64,25 @@ describe("remote-prefab-loader", () => {
       // Assert
       expect(context.node.addChild).toBeCalled();
       context.initializationEventHandlers.forEach((handler) => expect(handler.emit).toBeCalled());
+    });
+
+    describe("when CC_EDITOR is true", () => {
+      it("should do nothing", () => {
+        // Arrange
+        Object.defineProperty(global, "CC_EDITOR", { value: true, writable: true });
+        const context = {
+          node: {
+            addChild: jest.fn(),
+          },
+          initializationEventHandlers: [],
+        };
+
+        // Act
+        component._onInitialize.call(context);
+
+        // Assert
+        expect(context.node.addChild).toBeCalledTimes(0);
+      });
     });
   });
 
