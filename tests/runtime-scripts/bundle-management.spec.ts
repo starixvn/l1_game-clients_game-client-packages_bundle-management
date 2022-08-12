@@ -17,15 +17,27 @@ const options = {
   },
 };
 const bundleManager = BundleManager.getInstance(options);
+const loadBundleMock = jest.fn();
+Object.defineProperty(global, "cc", {
+  value: {
+    assetManager: {
+      loadBundle: loadBundleMock,
+    },
+  },
+});
 
 describe("bundle-management", () => {
+  beforeEach(() => {
+    Object.defineProperty(global, "CC_EDITOR", { value: false, writable: true });
+  });
+
   describe("constructor", () => {
     it("when not pass the listener should create an instance without listeners", () => {
       // Arrange
-      BundleManager["instance"] = null;
+      (BundleManager["instance"] as unknown) = null;
 
       // Act
-      const instance = BundleManager.getInstance({ listeners: null, adapters: {} });
+      const instance = BundleManager.getInstance({ listeners: undefined, adapters: {} });
 
       // Assert
       expect(instance["listeners"]).toHaveLength(0);
@@ -35,7 +47,9 @@ describe("bundle-management", () => {
   describe("getBundleInfo", () => {
     it("when the global variable is not defined should throw an error", () => {
       // Arrange
-      window.bundleInfos = undefined;
+      window.bundleManagement = {
+        bundles: undefined,
+      };
 
       // Act
       const getBundleInfo = () => bundleManager.getBundleInfo("id");
@@ -46,11 +60,13 @@ describe("bundle-management", () => {
 
     it("when getting the defined bundle info variable should return the bundle info", () => {
       // Arrange
-      window.bundleInfos = {
-        id: {
-          name: "name",
-          url: "url",
-          useMd5Cache: false,
+      window.bundleManagement = {
+        bundles: {
+          id: {
+            name: "name",
+            url: "url",
+            useMd5Cache: false,
+          },
         },
       };
 
@@ -63,11 +79,13 @@ describe("bundle-management", () => {
 
     it("when getting bundle info with a not defined id should return the undefined value", () => {
       // Arrange
-      window.bundleInfos = {
-        id: {
-          name: "name",
-          url: "url",
-          useMd5Cache: true,
+      window.bundleManagement = {
+        bundles: {
+          id: {
+            name: "name",
+            url: "url",
+            useMd5Cache: true,
+          },
         },
       };
 
@@ -81,26 +99,29 @@ describe("bundle-management", () => {
 
   describe("loadBundle", () => {
     beforeEach(() => {
-      window.bundleInfos = {
-        id: {
-          name: "name",
-          url: "url",
-          useMd5Cache: true,
-        },
-        "other-id": {
-          name: "name",
-          url: "url",
-          useMd5Cache: false,
-        },
-        "other-id1": {
-          name: "name",
-          url: "url",
-          useMd5Cache: false,
-          dependencies: ["other-id"],
+      window.bundleManagement = {
+        bundles: {
+          id: {
+            name: "name",
+            url: "url",
+            useMd5Cache: true,
+          },
+          "other-id": {
+            name: "name",
+            url: "url",
+            useMd5Cache: false,
+          },
+          "other-id1": {
+            name: "name",
+            url: "url",
+            useMd5Cache: false,
+            dependencies: ["other-id"],
+          },
         },
       };
 
       assetManagerMock.loadBundle.mockReset();
+      loadBundleMock.mockReset();
     });
 
     it("when loading the bundle failure should throw an error", async () => {
@@ -156,20 +177,57 @@ describe("bundle-management", () => {
         expect(assetManagerMock.loadBundle).toBeCalledTimes(2);
       });
     });
+
+    describe("when CC_EDITOR is true", () => {
+      beforeEach(() => {
+        Object.defineProperty(global, "CC_EDITOR", { value: true, writable: true });
+      });
+      describe("when loadBundle without any error", () => {
+        it("should load default bundle", async () => {
+          // Arrange
+          loadBundleMock.mockImplementation((name, type, callback) => {
+            callback(false);
+          });
+
+          // Act
+          await bundleManager.loadBundle("id");
+
+          // Assert
+          expect(loadBundleMock).toBeCalled();
+        });
+      });
+
+      describe("when loadBundle error", () => {
+        it("should throw an exception", () => {
+          // Arrange
+          loadBundleMock.mockImplementation((name, type, callback) => {
+            callback("error");
+          });
+
+          // Act
+          const call = () => bundleManager.loadBundle("id");
+
+          // Assert
+          expect(call()).rejects.toMatch("error");
+        });
+      });
+    });
   });
 
   describe("loadAsset", () => {
     beforeEach(() => {
-      window.bundleInfos = {
-        id: {
-          name: "name",
-          url: "url",
-          useMd5Cache: true,
-        },
-        "other-id": {
-          name: "name",
-          url: "url",
-          useMd5Cache: false,
+      window.bundleManagement = {
+        bundles: {
+          id: {
+            name: "name",
+            url: "url",
+            useMd5Cache: true,
+          },
+          "other-id": {
+            name: "name",
+            url: "url",
+            useMd5Cache: false,
+          },
         },
       };
     });
@@ -222,6 +280,29 @@ describe("bundle-management", () => {
 
       // Assert
       await expect(asset).rejects.toThrowError();
+    });
+
+    describe("when CC_EDITOR is true", () => {
+      it("should using pathForDevMode property", async () => {
+        // Arrange
+        Object.defineProperty(global, "CC_EDITOR", { value: true, writable: true });
+        loadBundleMock.mockImplementation((name, type, callback) => {
+          callback(false, {
+            load: jest.fn().mockImplementation((path, type, onProgress, onComplete) => {
+              expect(path).toBe("dev");
+              onComplete(null, {});
+            }),
+          });
+        });
+
+        const options = { type: "Prefab", bundleId: "id", path: "path", pathForDevMode: "dev" };
+
+        // Act
+        const asset = await bundleManager.loadAsset(options);
+
+        // Assert
+        expect(asset).toBeDefined();
+      });
     });
   });
 });

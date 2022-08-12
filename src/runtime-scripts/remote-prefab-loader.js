@@ -39,6 +39,11 @@ cc.Class({
   },
 
   _onInitialize(node) {
+    if (CC_EDITOR) {
+      // Without running in development mode
+      return;
+    }
+
     this.node.addChild(node);
 
     this.initializationEventHandlers.forEach((event) => event.emit([node]));

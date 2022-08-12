@@ -20,21 +20,27 @@ interface ILoadAssetOptions {
     bundleId: string;
     path: string;
     type: unknown;
+    pathForDevMode: string;
     onProgress?: (finish: number, total: number) => void;
 }
 declare global {
+    const CC_EDITOR: boolean;
+    const Editor: any;
+    const cc: any;
     export interface Window {
-        bundleInfos: Record<string, {
-            name: string;
-            url: string;
-            useMd5Cache: boolean;
-            dependencies?: string[];
-        }>;
+        bundleManagement: {
+            bundles: Record<string, {
+                name: string;
+                url: string;
+                useMd5Cache: boolean;
+                dependencies?: string[];
+            }>;
+        };
     }
 }
 interface IBundleManagerOptions {
     adapters: IBundleManagerAdapters;
-    listeners: IListener[];
+    listeners?: IListener[];
 }
 export declare class BundleManager {
     private readonly listeners;

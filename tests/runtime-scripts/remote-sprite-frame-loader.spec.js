@@ -21,6 +21,10 @@ jest.mock("bundle-management", () => ({
 require("../../src/runtime-scripts/remote-sprite-frame-loader");
 
 describe("remote-sprite-frame-loader", () => {
+  beforeEach(() => {
+    Object.defineProperty(global, "CC_EDITOR", { value: false, writable: true });
+  });
+
   it("the component should be loaded", () => {
     expect(component).toBeDefined();
   });
@@ -132,6 +136,30 @@ describe("remote-sprite-frame-loader", () => {
 
       // Assert
       expect(context._updateNewSpriteFrame).toBeCalled();
+    });
+
+    describe("when CC_EDITOR is true", () => {
+      it("should do nothing", async () => {
+        // Arrange
+        Object.defineProperty(global, "CC_EDITOR", { value: true, writable: true });
+        const context = {
+          _updateNewSpriteFrame: jest.fn(),
+          spriteFramePath: "path",
+          _onProgress: jest.fn(),
+        };
+
+        bundleManager.loadAsset.mockImplementationOnce((options) => {
+          options.onProgress(0, 0);
+
+          return Promise.resolve({});
+        });
+
+        // Act
+        await component.onLoad.call(context);
+
+        // Assert
+        expect(bundleManager.loadAsset).toBeCalledTimes(0);
+      });
     });
   });
 });
