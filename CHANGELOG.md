@@ -1,3 +1,10 @@
+# [1.2.0](https://git3.nexdev.net/l1/game-clients/bundle-management/compare/v1.1.1...v1.2.0) (2022-08-12)
+
+
+### Features
+
+* support load asset in development mode ([632e1dc](https://git3.nexdev.net/l1/game-clients/bundle-management/commit/632e1dc131cd93c4a4c74173333ab3c4f1eb568c))
+
 ## [1.1.1](https://git3.nexdev.net/l1/game-clients/bundle-management/compare/v1.1.0...v1.1.1) (2022-06-30)
 
 
