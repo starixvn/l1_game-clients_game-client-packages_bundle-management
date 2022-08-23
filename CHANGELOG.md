@@ -1,3 +1,10 @@
+# [1.3.0](https://git3.nexdev.net/l1/game-clients/bundle-management/compare/v1.2.0...v1.3.0) (2022-08-23)
+
+
+### Features
+
+* apply sliding cache when getting the version ([38f9b12](https://git3.nexdev.net/l1/game-clients/bundle-management/commit/38f9b12d8165135e3b18d371a12125cb0581d6f4))
+
 # [1.2.0](https://git3.nexdev.net/l1/game-clients/bundle-management/compare/v1.1.1...v1.2.0) (2022-08-12)
 
 
