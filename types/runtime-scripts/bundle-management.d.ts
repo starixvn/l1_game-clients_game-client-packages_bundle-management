@@ -20,7 +20,7 @@ interface ILoadAssetOptions {
     bundleId: string;
     path: string;
     type: unknown;
-    pathForDevMode: string;
+    pathForDevMode?: string;
     onProgress?: (finish: number, total: number) => void;
 }
 declare global {
@@ -29,7 +29,7 @@ declare global {
     const cc: any;
     export interface Window {
         bundleManagement: {
-            bundles: Record<string, {
+            bundles?: Record<string, {
                 name: string;
                 url: string;
                 useMd5Cache: boolean;
@@ -41,12 +41,14 @@ declare global {
 interface IBundleManagerOptions {
     adapters: IBundleManagerAdapters;
     listeners?: IListener[];
+    cacheDuration?: number;
 }
 export declare class BundleManager {
     private readonly listeners;
     private readonly adapters;
     private readonly versions;
     private static instance;
+    private readonly cache;
     constructor(options: IBundleManagerOptions);
     static initialize(options: IBundleManagerOptions): void;
     static getInstance(options?: IBundleManagerOptions): BundleManager;

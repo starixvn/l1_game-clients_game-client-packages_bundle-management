@@ -34,6 +34,10 @@ cc.Class({
         });
     },
     _onInitialize: function (node) {
+        if (CC_EDITOR) {
+            // Without running in development mode
+            return;
+        }
         this.node.addChild(node);
         this.initializationEventHandlers.forEach(function (event) { return event.emit([node]); });
     },
