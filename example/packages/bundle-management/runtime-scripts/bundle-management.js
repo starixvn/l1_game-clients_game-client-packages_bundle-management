@@ -37,11 +37,13 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.BundleManager = void 0;
+var sliding_cache_1 = require("./sliding-cache");
 var BundleManager = /** @class */ (function () {
     function BundleManager(options) {
         this.listeners = options.listeners || [];
         this.adapters = options.adapters;
         this.versions = {};
+        this.cache = new sliding_cache_1.SlidingCache(options.cacheDuration || 30000);
     }
     BundleManager.initialize = function (options) {
         if (!BundleManager.instance) {
@@ -55,7 +57,7 @@ var BundleManager = /** @class */ (function () {
         return BundleManager.instance;
     };
     BundleManager.prototype.getBundleInfo = function (id) {
-        var bundleInfos = window.bundleInfos;
+        var bundleInfos = window.bundleManagement.bundles;
         if (!bundleInfos || !bundleInfos[id]) {
             throw new Error("Not found bundle '".concat(id, "'."));
         }
@@ -63,12 +65,21 @@ var BundleManager = /** @class */ (function () {
     };
     BundleManager.prototype.loadBundle = function (bundleId) {
         return __awaiter(this, void 0, void 0, function () {
-            var assertManager, _a, name, url, useMd5Cache, dependencies, bundleUrl;
+            var assetManager, _a, name, url, useMd5Cache, dependencies, bundleUrl;
             var _this = this;
             return __generator(this, function (_b) {
                 switch (_b.label) {
                     case 0:
-                        assertManager = this.adapters.assetManager();
+                        if (CC_EDITOR) {
+                            // In development mode, all assets will be put in the resources bundle.
+                            return [2 /*return*/, new Promise(function (resolve, reject) {
+                                    var defaultBundle = "resources";
+                                    cc.assetManager.loadBundle(defaultBundle, null, function (error, resource) {
+                                        error ? reject(error) : resolve(resource);
+                                    });
+                                })];
+                        }
+                        assetManager = this.adapters.assetManager();
                         _a = this.getBundleInfo(bundleId), name = _a.name, url = _a.url, useMd5Cache = _a.useMd5Cache, dependencies = _a.dependencies;
                         bundleUrl = "".concat(url, "/").concat(name);
                         if (!useMd5Cache) return [3 /*break*/, 2];
@@ -84,7 +95,7 @@ var BundleManager = /** @class */ (function () {
                         _b.label = 4;
                     case 4: return [2 /*return*/, new Promise(function (resolve, reject) {
                             var version = _this.versions[name];
-                            assertManager.loadBundle(bundleUrl, { version: version }, function (error, bundle) {
+                            assetManager.loadBundle(bundleUrl, { version: version }, function (error, bundle) {
                                 error ? reject(error) : resolve(bundle);
                             });
                         })];
@@ -94,7 +105,7 @@ var BundleManager = /** @class */ (function () {
     };
     BundleManager.prototype.loadAsset = function (options) {
         return __awaiter(this, void 0, void 0, function () {
-            var bundleId, path, type, onProgress, bundle;
+            var bundleId, path, type, onProgress, bundle, assetPath;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -105,8 +116,9 @@ var BundleManager = /** @class */ (function () {
                         return [4 /*yield*/, this.loadBundle(bundleId)];
                     case 1:
                         bundle = _a.sent();
+                        assetPath = CC_EDITOR ? options.pathForDevMode : path;
                         return [2 /*return*/, new Promise(function (resolve, reject) {
-                                bundle.load(path, type, onProgress, function (error, asset) {
+                                bundle.load(assetPath, type, onProgress, function (error, asset) {
                                     error ? reject(error) : resolve(asset);
                                 });
                             })];
@@ -116,14 +128,15 @@ var BundleManager = /** @class */ (function () {
     };
     BundleManager.prototype.compareAndUpdateNewVersion = function (bundleId) {
         return __awaiter(this, void 0, void 0, function () {
-            var _a, name, url, http, versionUrl, versions, oldVersion, currentVersion, difference;
+            var _a, name, url, http, versionUrl, getVersion, versions, oldVersion, currentVersion, difference;
             return __generator(this, function (_b) {
                 switch (_b.label) {
                     case 0:
                         _a = this.getBundleInfo(bundleId), name = _a.name, url = _a.url;
                         http = this.adapters.http();
                         versionUrl = "".concat(url, "/versions.json?v=").concat(Date.now());
-                        return [4 /*yield*/, http.get(versionUrl)];
+                        getVersion = function () { return http.get(versionUrl); };
+                        return [4 /*yield*/, this.cache.execute(url, getVersion)];
                     case 1:
                         versions = _b.sent();
                         oldVersion = this.versions[name];

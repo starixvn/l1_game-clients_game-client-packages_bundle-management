@@ -1,6 +1,8 @@
 "use strict";
 
-window.bundleInfos = {
+if (!window.bundleManagement) window.bundleManagement = {};
+
+window.bundleManagement.bundles = {
   local: {
     useMd5Cache: location.href.endsWith("/build/"),
     url: "assets",

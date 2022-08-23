@@ -1,3 +1,5 @@
+import { SlidingCache } from "./sliding-cache";
+
 interface IAdapter<T> {
   (): T;
 }
@@ -47,6 +49,7 @@ declare global {
 interface IBundleManagerOptions {
   adapters: IBundleManagerAdapters;
   listeners?: IListener[];
+  cacheDuration?: number;
 }
 
 export class BundleManager {
@@ -54,11 +57,13 @@ export class BundleManager {
   private readonly adapters: IBundleManagerAdapters;
   private readonly versions: Record<string, string>;
   private static instance: BundleManager;
+  private readonly cache: SlidingCache;
 
   constructor(options: IBundleManagerOptions) {
     this.listeners = options.listeners || [];
     this.adapters = options.adapters;
     this.versions = {};
+    this.cache = new SlidingCache(options.cacheDuration || 30000);
   }
 
   public static initialize(options: IBundleManagerOptions) {
@@ -137,7 +142,8 @@ export class BundleManager {
     const { name, url } = this.getBundleInfo(bundleId);
     const http = this.adapters.http();
     const versionUrl = `${url}/versions.json?v=${Date.now()}`;
-    const versions = await http.get<Record<string, string>>(versionUrl);
+    const getVersion = () => http.get<Record<string, string>>(versionUrl);
+    const versions = await this.cache.execute(url, getVersion);
 
     const oldVersion = this.versions[name];
     const currentVersion = versions[name];
