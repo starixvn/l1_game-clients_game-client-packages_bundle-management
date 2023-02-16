@@ -19,11 +19,11 @@ include:
     file: "npm/publish-npm-ts.gitlab-ci.yml"
 
 unit-test-js:
-  image: hub.lumigame.com/docker-hub/library/node:18.1-alpine
+  image: hub.lumigame.com/docker-hub/library/node:18.14-alpine
   artifacts:
     reports:
       junit: coverage/*.xml
       cobertura: coverage/cobertura-coverage.xml
 
 publish_npm:
-  image: hub.lumigame.com/docker-hub/library/node:18.1-slim
+  image: hub.lumigame.com/docker-hub/library/node:18.14-slim
