@@ -74,7 +74,7 @@
     "rimraf": "3.0.2",
     "sc-semantic-release": "1.2.0",
     "semantic-release": "19.0.3",
-    "ts-jest": "28.0.5",
+    "ts-jest": "28.0.8",
     "typescript": "4.7.4"
   },
   "dependencies": {
