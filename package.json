@@ -22,7 +22,6 @@
     "types/"
   ],
   "scripts": {
-    "postinstall": "node scripts/install-extension.js",
     "test": "jest",
     "test-coverage": "jest --coverage",
     "build": "rimraf ./lib && rimraf ./types && tsc && copyfiles -u 1 src/**/*.meta lib  && copyfiles -u 1 src/**/*.txt lib",
